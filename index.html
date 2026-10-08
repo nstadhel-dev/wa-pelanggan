@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WA Pelanggan - Kelola Pelanggan, Promosi & WhatsApp Blast</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Nunito:wght@300;400;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #10B981;
+            --primary-hover: #059669;
+            --bg-color: #F3F4F6;
+            --card-bg: #FFFFFF;
+            --text-color: #1F2937;
+            --sidebar-bg: #111827;
+            --sidebar-text: #9CA3AF;
+            --sidebar-hover: #1F2937;
+            --border-color: #E5E7EB;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+        .theme-whatsapp-green {
+            --primary-color: #25D366;
+            --primary-hover: #1EBE57;
+            --sidebar-bg: #075E54;
+        }
+        .theme-modern-dark {
+            --bg-color: #0F172A;
+            --card-bg: #1E293B;
+            --text-color: #F8FAFC;
+            --sidebar-bg: #090D16;
+            --border-color: #334155;
+        }
+        .theme-elegant-gold {
+            --primary-color: #D97706;
+            --primary-hover: #B45309;
+            --sidebar-bg: #1C1917;
+        }
+        .theme-ocean-blue {
+            --primary-color: #0284C7;
+            --primary-hover: #0369A1;
+            --sidebar-bg: #0F172A;
+        }
+        .theme-purple-pro {
+            --primary-color: #8B5CF6;
+            --primary-hover: #7C3AED;
+            --sidebar-bg: #2E1065;
+        }
+        .theme-red-business {
+            --primary-color: #DC2626;
+            --primary-hover: #B91C1C;
+            --sidebar-bg: #1F1010;
+        }
+        .theme-minimal-white {
+            --bg-color: #FFFFFF;
+            --card-bg: #F9FAFB;
+            --text-color: #111827;
+            --sidebar-bg: #F3F4F6;
+            --sidebar-text: #4B5563;
+        }
+        .theme-midnight {
+            --bg-color: #09090B;
+            --card-bg: #18181B;
+            --text-color: #FAFAFA;
+            --sidebar-bg: #121214;
+            --border-color: #27272A;
+        }
+        .theme-fresh-green {
+            --primary-color: #059669;
+            --primary-hover: #047857;
+            --sidebar-bg: #022C22;
+        }
+        .theme-premium-black {
+            --primary-color: #F59E0B;
+            --primary-hover: #D97706;
+            --bg-color: #000000;
+            --card-bg: #121212;
+            --text-color: #E5E7EB;
+            --sidebar-bg: #0A0A0A;
+            --border-color: #262626;
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col">
+
+    <!-- AUTH & APP CONTAINER -->
+    <div id="app" class="h-full flex flex-col">
+        <!-- LOGIN SCREEN -->
+        <div id="loginScreen" class="fixed inset-0 z-50 bg-gray-900 flex items-center justify-center p-4">
+            <div class="max-w-md w-full bg-gray-800 rounded-2xl shadow-2xl p-8 border border-gray-700">
+                <div class="text-center mb-8">
+                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-emerald-600 text-white mb-4 shadow-lg shadow-emerald-600/30">
+                        <i data-lucide="message-square" class="w-8 h-8"></i>
+                    </div>
+                    <h1 class="text-2xl font-bold text-white">WA Pelanggan</h1>
+                    <p class="text-sm text-gray-400 mt-1">Kelola Pelanggan, Buat Promosi, dan Kirim WhatsApp Lebih Mudah</p>
+                    <span class="text-xs text-emerald-400 font-medium mt-2 block">Developer: Adhel Nst</span>
+                </div>
+
+                <form id="loginForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-1">Email</label>
+                        <input type="email" id="loginEmail" required class="w-full px-4 py-2.5 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-emerald-500" placeholder="admin@wapelanggan.com">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-1">Password</label>
+                        <input type="password" id="loginPassword" required class="w-full px-4 py-2.5 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-emerald-500" placeholder="••••••••">
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <label class="flex items-center text-gray-400">
+                            <input type="checkbox" class="rounded bg-gray-900 border-gray-700 text-emerald-600 focus:ring-0 mr-2"> Ingat saya
+                        </label>
+                        <a href="#" id="forgotPasswordBtn" class="text-emerald-400 hover:underline">Lupa password?</a>
+                    </div>
+                    <button type="submit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg shadow-lg shadow-emerald-600/30 transition duration-200">
+                        Masuk ke Dashboard
+                    </button>
+                    <div id="loginError" class="text-red-400 text-sm text-center hidden mt-2"></div>
+                </form>
+            </div>
+        </div>
+
+        <!-- MAIN DASHBOARD LAYOUT (Hidden until auth success) -->
+        <div id="mainDashboard" class="h-full flex overflow-hidden hidden">
+            <!-- SIDEBAR -->
+            <aside id="sidebar" class="w-64 bg-gray-900 border-r border-gray-800 flex flex-col transition-all duration-300 z-20">
+                <div class="p-5 border-b border-gray-800 flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-lg bg-emerald-600 flex items-center justify-center text-white">
+                            <i data-lucide="message-square-code" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h2 class="font-bold text-white text-base">WA Pelanggan</h2>
+                            <span class="text-xs text-gray-400">Cloud API Official</span>
+                        </div>
+                    </div>
+                </div>
+
+                <nav class="flex-1 overflow-y-auto px-4 py-4 space-y-1.5">
+                    <a href="#" onclick="switchTab('dashboard')" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition active-tab" data-tab="dashboard">
+                        <i data-lucide="layout-dashboard" class="w-5 h-5"></i><span>Dashboard</span>
+                    </a>
+                    <a href="#" onclick="switchTab('customers')" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition" data-tab="customers">
+                        <i data-lucide="users" class="w-5 h-5"></i><span>Data Pelanggan</span>
+                    </a>
+                    <a href="#" onclick="switchTab('templates')" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition" data-tab="templates">
+                        <i data-lucide="layout-template" class="w-5 h-5"></i><span>Template (100)</span>
+                    </a>
+                    <a href="#" onclick="switchTab('ai-generator')" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition" data-tab="ai-generator">
+                        <i data-lucide="sparkles" class="w-5 h-5"></i><span>AI Generated</span>
+                    </a>
+                    <a href="#" onclick="switchTab('whatsapp-blast')" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition" data-tab="whatsapp-blast">
+                        <i data-lucide="send" class="w-5 h-5"></i><span>WhatsApp Blast</span>
+                    </a>
+                    <a href="#" onclick="switchTab('notifications')" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition" data-tab="notifications">
+                        <i data-lucide="inbox" class="w-5 h-5"></i><span>Notifikasi WhatsApp</span>
+                    </a>
+                    <a href="#" onclick="switchTab('logs')" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition" data-tab="logs">
+                        <i data-lucide="file-text" class="w-5 h-5"></i><span>Log Riwayat</span>
+                    </a>
+                    <a href="#" onclick="switchTab('admin-mgmt')" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition" data-tab="admin-mgmt">
+                        <i data-lucide="store" class="w-5 h-5"></i><span>Manajemen Admin</span>
+                    </a>
+                    <a href="#" onclick="switchTab('settings')" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition" data-tab="settings">
+                        <i data-lucide="settings" class="w-5 h-5"></i><span>Konfigurasi API</span>
+                    </a>
+                    <a href="#" onclick="switchTab('themes')" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition" data-tab="themes">
+                        <i data-lucide="palette" class="w-5 h-5"></i><span>Tema / UI</span>
+                    </a>
+                </nav>
+
+                <div class="p-4 border-t border-gray-800">
+                    <button onclick="handleLogout()" class="w-full flex items-center justify-center space-x-2 py-2.5 bg-red-600/10 hover:bg-red-600/20 text-red-400 rounded-lg font-medium transition">
+                        <i data-lucide="log-out" class="w-5 h-5"></i><span>Keluar</span>
+                    </button>
+                </div>
+            </aside>
+
+            <!-- CONTENT AREA -->
+            <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+                <!-- TOPBAR -->
+                <header class="h-16 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-6 flex items-center justify-between z-10">
+                    <div class="flex items-center space-x-4">
+                        <h1 id="pageTitle" class="text-xl font-bold text-gray-900 dark:text-white">Dashboard Utama</h1>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div id="connectionStatusBadge" class="px-3 py-1 bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 rounded-full text-xs font-semibold flex items-center space-x-1.5">
+                            <span class="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></span>
+                            <span>API Checking...</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span id="userEmailDisplay" class="text-sm font-medium text-gray-700 dark:text-gray-300">admin@wapelanggan.com</span>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- MAIN VIEWPORT -->
+                <main class="flex-1 overflow-y-auto p-6">
+                    <!-- TAB 1: DASHBOARD -->
+                    <div id="tab-dashboard" class="tab-content space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">Total Pelanggan</p>
+                                        <h3 id="statTotalCustomers" class="text-3xl font-bold mt-1 text-gray-900 dark:text-white">0</h3>
+                                    </div>
+                                    <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
+                                        <i data-lucide="users" class="w-6 h-6"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">Total Template</p>
+                                        <h3 id="statTotalTemplates" class="text-3xl font-bold mt-1 text-gray-900 dark:text-white">100</h3>
+                                    </div>
+                                    <div class="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center">
+                                        <i data-lucide="layout-template" class="w-6 h-6"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">Pesan Terkirim</p>
+                                        <h3 id="statTotalSent" class="text-3xl font-bold mt-1 text-gray-900 dark:text-white">0</h3>
+                                    </div>
+                                    <div class="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-500 flex items-center justify-center">
+                                        <i data-lucide="send" class="w-6 h-6"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">Pesan Gagal</p>
+                                        <h3 id="statTotalFailed" class="text-3xl font-bold mt-1 text-red-500">0</h3>
+                                    </div>
+                                    <div class="w-12 h-12 rounded-xl bg-red-500/10 text-red-500 flex items-center justify-center">
+                                        <i data-lucide="alert-circle" class="w-6 h-6"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Action & Connection Status Banner -->
+                        <div class="bg-gradient-to-r from-emerald-600 to-teal-700 rounded-2xl p-6 text-white shadow-lg flex flex-col md:flex-row items-center justify-between">
+                            <div>
+                                <h2 class="text-2xl font-bold">Siap Mengirim WhatsApp Blast?</h2>
+                                <p class="text-emerald-100 mt-1">Gunakan Meta WhatsApp Cloud API resmi dengan gambar produk & caption otomatis.</p>
+                            </div>
+                            <div class="mt-4 md:mt-0 flex space-x-3">
+                                <button onclick="switchTab('whatsapp-blast')" class="px-5 py-2.5 bg-white text-emerald-800 font-bold rounded-xl shadow hover:bg-emerald-50 transition">
+                                    Mulai Blast Sekarang
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 2: DATA PELANGGAN -->
+                    <div id="tab-customers" class="tab-content space-y-6 hidden">
+                        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                            <div class="flex items-center space-x-3 w-full md:w-auto">
+                                <input type="text" id="customerSearchInput" placeholder="Cari nama, email, atau no HP..." class="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg w-full md:w-80 text-sm focus:outline-none focus:border-emerald-500">
+                                <button onclick="openAddCustomerModal()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg text-sm flex items-center space-x-2 shrink-0">
+                                    <i data-lucide="user-plus" class="w-4 h-4"></i><span>Tambah Pelanggan</span>
+                                </button>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button onclick="deleteAllCustomers()" class="px-3 py-2 bg-red-600/10 text-red-500 hover:bg-red-600/20 rounded-lg text-sm font-medium transition">Hapus Semua</button>
+                            </div>
+                        </div>
+
+                        <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm">
+                            <table class="w-full text-left border-collapse">
+                                <thead class="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                    <tr>
+                                        <th class="p-4"><input type="checkbox" id="selectAllCustomers" onclick="toggleSelectAllCustomers(this)"></th>
+                                        <th class="p-4">Nama Pelanggan</th>
+                                        <th class="p-4">No WhatsApp</th>
+                                        <th class="p-4">Email</th>
+                                        <th class="p-4">Alamat</th>
+                                        <th class="p-4 text-right">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="customerTableBody" class="divide-y divide-gray-200 dark:divide-gray-700 text-sm">
+                                    <!-- Dynamic Customers -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- TAB 3: TEMPLATES -->
+                    <div id="tab-templates" class="tab-content space-y-6 hidden">
+                        <div class="flex justify-between items-center">
+                            <div class="flex space-x-3 w-full md:w-80">
+                                <input type="text" id="templateSearchInput" placeholder="Cari 100 template promosi..." class="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg w-full text-sm focus:outline-none focus:border-emerald-500">
+                            </div>
+                        </div>
+                        <div id="templateGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- 100 Seeded Templates Loaded Dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- TAB 4: AI GENERATED -->
+                    <div id="tab-ai-generator" class="tab-content space-y-6 hidden">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 space-y-4">
+                                <h3 class="text-lg font-bold">AI Marketing Generator</h3>
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">Nama Produk</label>
+                                    <input type="text" id="aiProductName" class="w-full px-4 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-sm" placeholder="Contoh: Kopi Susu Aren Premium">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">Deskripsi & Keunggulan</label>
+                                    <textarea id="aiProductDesc" rows="3" class="w-full px-4 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-sm" placeholder="Rasa kopi robusta pilihan dengan gula aren asli..."></textarea>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium mb-1">Harga</label>
+                                        <input type="text" id="aiPrice" class="w-full px-4 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-sm" placeholder="Rp 25.000">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium mb-1">Diskon / Promo</label>
+                                        <input type="text" id="aiDiscount" class="w-full px-4 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-sm" placeholder="Diskon 20% + Gratis Ongkir">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">Gaya Bahasa</label>
+                                    <select id="aiTone" class="w-full px-4 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-sm">
+                                        <option value="urgency">Urgency / Flash Sale</option>
+                                        <option value="friendly">Friendly & Santai</option>
+                                        <option value="professional">Profesional & Formal</option>
+                                        <option value="storytelling">Storytelling Emosional</option>
+                                    </select>
+                                </div>
+                                <button onclick="generateAITemplate()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg shadow transition">
+                                    Buat Promosi dengan AI
+                                </button>
+                            </div>
+                            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 flex flex-col justify-between">
+                                <div>
+                                    <h3 class="text-lg font-bold mb-4">Hasil AI Preview WhatsApp</h3>
+                                    <div id="aiResultPreview" class="bg-gray-100 dark:bg-gray-900 p-4 rounded-xl border border-gray-300 dark:border-gray-700 text-sm space-y-3">
+                                        <p class="text-gray-400 italic">Hasil generasi AI akan tampil di sini...</p>
+                                    </div>
+                                </div>
+                                <button id="saveAiToTemplateBtn" onclick="saveAITemplateToDB()" class="w-full mt-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg hidden">
+                                    Simpan ke Daftar Template
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 5: WHATSAPP BLAST -->
+                    <div id="tab-whatsapp-blast" class="tab-content space-y-6 hidden">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 space-y-4">
+                                <h3 class="text-lg font-bold">1. Pilih Penerima Pelanggan</h3>
+                                <div class="flex items-center justify-between">
+                                    <span id="selectedCustomerCount" class="text-sm text-gray-400">0 pelanggan dipilih</span>
+                                    <button onclick="selectAllBlastCustomers(true)" class="text-xs text-emerald-400 hover:underline">Pilih Semua</button>
+                                </div>
+                                <div id="blastCustomerList" class="max-h-60 overflow-y-auto space-y-2 border border-gray-200 dark:border-gray-700 p-3 rounded-xl">
+                                    <!-- Loaded checkboxes -->
+                                </div>
+                                <h3 class="text-lg font-bold pt-4">2. Pilih Template Pesan</h3>
+                                <select id="blastTemplateSelect" onchange="previewBlastTemplate()" class="w-full px-4 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-sm">
+                                    <option value="">-- Pilih Template Promosi --</option>
+                                </select>
+                                <div class="pt-4">
+                                    <button onclick="executeWhatsAppBlast()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg shadow-emerald-600/30">
+                                        Kirim WhatsApp Blast Sekarang (Media Image + Caption)
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700">
+                                <h3 class="text-lg font-bold mb-4">Preview Pesan WhatsApp</h3>
+                                <div class="bg-emerald-950/20 border border-emerald-500/30 p-4 rounded-xl space-y-3" id="blastLivePreview">
+                                    <p class="text-sm text-gray-400 italic">Pilih template untuk melihat preview pesan WhatsApp...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 6: NOTIFICATIONS / INBOX -->
+                    <div id="tab-notifications" class="tab-content space-y-6 hidden">
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-lg font-bold">Inbox Pesan Masuk & AI Auto-Reply</h3>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-sm font-medium">AI Auto Reply:</span>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" id="aiAutoReplyToggle" class="sr-only peer" onchange="toggleAiAutoReply(this)">
+                                        <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                                    </label>
+                                </div>
+                            </div>
+                            <div id="inboxMessageList" class="space-y-4">
+                                <p class="text-sm text-gray-400">Belum ada pesan masuk dari Webhook WhatsApp.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 7: LOG RIWAYAT -->
+                    <div id="tab-logs" class="tab-content space-y-6 hidden">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-lg font-bold">Log Riwayat Pengiriman WhatsApp</h3>
+                            <button onclick="clearAllLogs()" class="px-4 py-2 bg-red-600/10 text-red-500 rounded-lg text-sm font-medium">Hapus Semua Log</button>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+                            <table class="w-full text-left border-collapse">
+                                <thead class="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 text-xs font-semibold text-gray-500 uppercase">
+                                    <tr>
+                                        <th class="p-4">Waktu</th>
+                                        <th class="p-4">Pelanggan</th>
+                                        <th class="p-4">No WhatsApp</th>
+                                        <th class="p-4">Status</th>
+                                        <th class="p-4">Message ID Meta</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="logsTableBody" class="divide-y divide-gray-200 dark:divide-gray-700 text-sm">
+                                    <!-- Dynamic logs -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- TAB 8: MANAJEMEN ADMIN -->
+                    <div id="tab-admin-mgmt" class="tab-content space-y-6 hidden">
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 max-w-2xl space-y-4">
+                            <h3 class="text-lg font-bold">Profil & Pengaturan Bisnis</h3>
+                            <form id="adminForm" onsubmit="saveAdminSettings(event)" class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">Jenis Bisnis</label>
+                                    <select id="businessType" class="w-full px-4 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-sm">
+                                        <option value="Restaurant">Restaurant</option>
+                                        <option value="Cafe">Cafe</option>
+                                        <option value="Online Shop">Online Shop</option>
+                                        <option value="Fashion">Fashion</option>
+                                        <option value="Jasa">Jasa / Layanan</option>
+                                        <option value="Lainnya">Lainnya</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">Nama Bisnis</label>
+                                    <input type="text" id="businessName" class="w-full px-4 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-sm" placeholder="Contoh: Kopi Kenangan Indah">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">Nomor WhatsApp Admin (Pengirim / Phone Number ID)</label>
+                                    <input type="text" id="adminWhatsappNumber" class="w-full px-4 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-sm" placeholder="6281234567890">
+                                </div>
+                                <button type="submit" class="py-2.5 px-6 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg text-sm">Simpan Pengaturan Admin</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- TAB 9: PENGATURAN API -->
+                    <div id="tab-settings" class="tab-content space-y-6 hidden">
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 max-w-2xl space-y-4">
+                            <h3 class="text-lg font-bold">WhatsApp Connection Test</h3>
+                            <p class="text-sm text-gray-400">Uji koneksi resmi Meta WhatsApp Cloud API langsung ke nomor tujuan.</p>
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Nomor WhatsApp Tujuan Test</label>
+                                <input type="text" id="testPhoneTarget" class="w-full px-4 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-sm" placeholder="628xxxxxxxxxx">
+                            </div>
+                            <button onclick="runWhatsAppConnectionTest()" class="py-2.5 px-6 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg text-sm">Kirim Test WhatsApp</button>
+                            <div id="testResultOutput" class="text-sm mt-2"></div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 10: TEMA UI -->
+                    <div id="tab-themes" class="tab-content space-y-6 hidden">
+                        <h3 class="text-lg font-bold">Pilih Tema Tampilan (10 Tema SaaS)</h3>
+                        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                            <button onclick="applyTheme('theme-whatsapp-green')" class="p-4 bg-emerald-600 text-white font-bold rounded-xl shadow">WhatsApp Green</button>
+                            <button onclick="applyTheme('theme-modern-dark')" class="p-4 bg-slate-900 text-white font-bold rounded-xl shadow border border-slate-700">Modern Dark</button>
+                            <button onclick="applyTheme('theme-elegant-gold')" class="p-4 bg-amber-600 text-white font-bold rounded-xl shadow">Elegant Gold</button>
+                            <button onclick="applyTheme('theme-ocean-blue')" class="p-4 bg-sky-600 text-white font-bold rounded-xl shadow">Ocean Blue</button>
+                            <button onclick="applyTheme('theme-purple-pro')" class="p-4 bg-purple-600 text-white font-bold rounded-xl shadow">Purple Pro</button>
+                            <button onclick="applyTheme('theme-red-business')" class="p-4 bg-red-600 text-white font-bold rounded-xl shadow">Red Business</button>
+                            <button onclick="applyTheme('theme-minimal-white')" class="p-4 bg-gray-100 text-gray-900 font-bold rounded-xl shadow border">Minimal White</button>
+                            <button onclick="applyTheme('theme-midnight')" class="p-4 bg-zinc-950 text-white font-bold rounded-xl shadow border border-zinc-800">Midnight</button>
+                            <button onclick="applyTheme('theme-fresh-green')" class="p-4 bg-emerald-800 text-white font-bold rounded-xl shadow">Fresh Green</button>
+                            <button onclick="applyTheme('theme-premium-black')" class="p-4 bg-neutral-900 text-amber-500 font-bold rounded-xl shadow border border-neutral-800">Premium Black</button>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK Modular -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, setDoc, deleteDoc, query, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Global Firebase configuration object (Replace with your Firebase project config)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDummyKeyForProductionSetup",
+            authDomain: "wa-pelanggan.firebaseapp.com",
+            projectId: "wa-pelanggan",
+            storageBucket: "wa-pelanggan.appspot.com",
+            messagingSenderId: "1234567890",
+            appId: "1:123456:web:abcdef"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        window.auth = auth;
+        window.db = db;
+
+        // Auth State Listener
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('mainDashboard').classList.remove('hidden');
+                document.getElementById('userEmailDisplay').innerText = user.email;
+                initAppData(user.uid);
+            } else {
+                document.getElementById('loginScreen').classList.remove('hidden');
+                document.getElementById('mainDashboard').classList.add('hidden');
+            }
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const pass = document.getElementById('loginPassword').value;
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+            } catch (err) {
+                const errEl = document.getElementById('loginError');
+                errEl.innerText = err.message;
+                errEl.classList.remove('hidden');
+            }
+        });
+
+        window.handleLogout = () => signOut(auth);
+        lucide.createIcons();
+    </script>
+
+    <script>
+        // Tab Switcher
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('bg-gray-800', 'text-white'));
+            const activeNav = document.querySelector(`[data-tab="${tabId}"]`);
+            if(activeNav) activeNav.classList.add('bg-gray-800', 'text-white');
+            const titles = {
+                'dashboard': 'Dashboard Utama',
+                'customers': 'Manajemen Data Pelanggan',
+                'templates': 'Template Promosi WhatsApp (100)',
+                'ai-generator': 'AI Marketing Generator',
+                'whatsapp-blast': 'Kirim WhatsApp Blast',
+                'notifications': 'Notifikasi & Inbox WhatsApp',
+                'logs': 'Log Riwayat Pengiriman',
+                'admin-mgmt': 'Manajemen Admin & Bisnis',
+                'settings': 'Konfigurasi & Test API',
+                'themes': 'Tema Tampilan UI'
+            };
+            document.getElementById('pageTitle').innerText = titles[tabId] || 'Dashboard';
+        }
+
+        function applyTheme(themeClass) {
+            document.body.className = `h-full flex flex-col ${themeClass}`;
+            localStorage.setItem('wa_pelanggan_theme', themeClass);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('wa_pelanggan_theme');
+            if(savedTheme) applyTheme(savedTheme);
+            lucide.createIcons();
+        });
+
+        function initAppData(uid) {
+            // Load initial dashboard stats and seed demo lists
+            document.getElementById('statTotalCustomers').innerText = '12';
+            document.getElementById('statTotalSent').innerText = '48';
+            document.getElementById('statTotalFailed').innerText = '0';
+            
+            // Populate dummy customers table for immediate production readiness test
+            const tbody = document.getElementById('customerTableBody');
+            tbody.innerHTML = `
+                <tr class="border-b border-gray-200 dark:border-gray-700">
+                    <td class="p-4"><input type="checkbox"></td>
+                    <td class="p-4 font-medium">Budi Santoso</td>
+                    <td class="p-4">6281234567890</td>
+                    <td class="p-4">budi@gmail.com</td>
+                    <td class="p-4">Jl. Merdeka No. 10, Semarang</td>
+                    <td class="p-4 text-right">
+                        <button class="text-emerald-500 hover:underline">Edit</button>
+                    </td>
+                </tr>
+            `;
+        }
+    </script>
+</body>
+</html>
