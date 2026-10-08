@@ -467,6 +467,7 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // STORAGE AWAL DIKOSONGKAN (Mulai bersih tanpa data demo bawaan)
         let customersData = [];
         let templatesData = [];
         let logsData = [];
@@ -527,13 +528,10 @@
             lucide.createIcons();
         }
 
-        // Render 100 Templates with safe copy handler
+        // Render 100 Templates
         function renderTemplates(data) {
             const grid = document.getElementById('templateGrid');
-            grid.innerHTML = data.map(t => {
-                // Encode content safely for inline usage
-                const encodedContent = encodeURIComponent(t.content);
-                return `
+            grid.innerHTML = data.map(t => `
                 <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl border border-gray-200 dark:border-gray-700 flex flex-col justify-between shadow-sm hover:border-emerald-500 transition">
                     <div>
                         <div class="flex items-center justify-between mb-2">
@@ -544,21 +542,11 @@
                     </div>
                     <div class="mt-4 pt-3 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center">
                         <button onclick="useTemplateToBlast(${t.id})" class="text-xs font-semibold text-emerald-500 hover:underline">Gunakan untuk Blast</button>
-                        <button onclick="copyTemplateText(decodeURIComponent('${encodedContent}'), ${t.id})" class="text-xs bg-gray-100 dark:bg-gray-700 px-3 py-1.5 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition">Salin Teks</button>
+                        <button onclick="navigator.clipboard.writeText(\`\${t.content}\`); alert('Template #${t.id} disalin!');" class="text-xs bg-gray-100 dark:bg-gray-700 px-3 py-1.5 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition">Salin Teks</button>
                     </div>
                 </div>
-            `;
-            }).join('');
-            lucide.createIcons();
+            `).join('');
         }
-
-        window.copyTemplateText = (text, id) => {
-            navigator.clipboard.writeText(text).then(() => {
-                alert(`Template #${id} berhasil disalin ke clipboard!`);
-            }).catch(err => {
-                alert('Gagal menyalin teks: ' + err);
-            });
-        };
 
         window.filterTemplates = () => {
             const keyword = document.getElementById('templateSearchInput').value.toLowerCase();
@@ -577,7 +565,7 @@
             select.innerHTML = `<option value="">-- Pilih Template Promosi (100 Tersedia) --</option>` + templatesData.map(t => `<option value="${t.id}">${t.title}</option>`).join('');
         }
 
-        // Customer Management Firestore
+        // Customer Management Firestore & Clean State
         async function loadCustomers() {
             const tbody = document.getElementById('customerTableBody');
             tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-gray-400"><i data-lucide="loader" class="w-5 h-5 animate-spin inline mr-2"></i>Memuat pelanggan...</td></tr>`;
@@ -592,23 +580,18 @@
                 renderBlastCustomerCheckboxes(customersData);
                 document.getElementById('statTotalCustomers').innerText = customersData.length;
             } catch (err) {
-                if(customersData.length === 0) {
-                    customersData = [
-                        { id: 'demo1', name: 'Budi Santoso', phone: '6281234567890', email: 'budi@gmail.com', address: 'Jl. Merdeka No. 10, Semarang' },
-                        { id: 'demo2', name: 'Siti Aminah', phone: '6289876543210', email: 'siti@gmail.com', address: 'Jl. Pahlawan No. 5, Semarang' }
-                    ];
-                }
+                // Jika offline atau koneksi gagal, tetap mulai dari kosong (tidak memuat data dummy bawaan)
+                customersData = [];
                 renderCustomersTable(customersData);
                 renderBlastCustomerCheckboxes(customersData);
-                document.getElementById('statTotalCustomers').innerText = customersData.length;
+                document.getElementById('statTotalCustomers').innerText = 0;
             }
         }
 
         function renderCustomersTable(data) {
             const tbody = document.getElementById('customerTableBody');
-            if(data.length === 0) {
+            if(!data || data.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-gray-400">Belum ada data pelanggan. Klik "+ Tambah Pelanggan".</td></tr>`;
-                lucide.createIcons();
                 return;
             }
             tbody.innerHTML = data.map(c => `
@@ -624,7 +607,6 @@
                     </td>
                 </tr>
             `).join('');
-            lucide.createIcons();
         }
 
         window.filterCustomers = () => {
@@ -667,6 +649,7 @@
                 closeCustomerModal();
                 loadCustomers();
             } catch(err) {
+                // Fallback lokal jika offline
                 if(id) {
                     const idx = customersData.findIndex(c => c.id === id);
                     if(idx !== -1) customersData[idx] = { id, name, phone, email, address };
@@ -697,8 +680,12 @@
             if(!confirm("Yakin ingin menghapus pelanggan ini?")) return;
             try {
                 await deleteDoc(doc(db, "customers", id));
-                loadCustomers();
+                customersData = customersData.filter(c => c.id !== id);
+                renderCustomersTable(customersData);
+                renderBlastCustomerCheckboxes(customersData);
+                document.getElementById('statTotalCustomers').innerText = customersData.length;
             } catch(err) {
+                // Hapus dari state lokal jika terjadi error koneksi
                 customersData = customersData.filter(c => c.id !== id);
                 renderCustomersTable(customersData);
                 renderBlastCustomerCheckboxes(customersData);
@@ -708,11 +695,21 @@
 
         window.deleteAllCustomers = async () => {
             if(!confirm("PERINGATAN: Hapus semua data pelanggan?")) return;
+            try {
+                // Hapus satu per satu dari Firestore jika tersambung
+                for(let c of customersData) {
+                    if(!c.id.startsWith('local_')) {
+                        await deleteDoc(doc(db, "customers", c.id));
+                    }
+                }
+            } catch(e) {
+                console.error(e);
+            }
             customersData = [];
             renderCustomersTable(customersData);
             renderBlastCustomerCheckboxes(customersData);
             document.getElementById('statTotalCustomers').innerText = 0;
-            alert("Semua data pelanggan dihapus.");
+            alert("Semua data pelanggan berhasil dikosongkan.");
         };
 
         window.toggleSelectAllCustomers = (master) => {
@@ -749,6 +746,11 @@
         // WhatsApp Blast Logic
         function renderBlastCustomerCheckboxes(data) {
             const container = document.getElementById('blastCustomerList');
+            if(!data || data.length === 0) {
+                container.innerHTML = `<p class="text-xs text-gray-400 p-2">Belum ada pelanggan. Tambahkan dulu di menu Data Pelanggan.</p>`;
+                updateBlastCount();
+                return;
+            }
             container.innerHTML = data.map(c => `
                 <label class="flex items-center space-x-3 text-sm p-2 hover:bg-gray-50 dark:hover:bg-gray-900/40 rounded-lg cursor-pointer">
                     <input type="checkbox" class="blast-customer-cb rounded border-gray-300 dark:border-gray-700 text-emerald-600" value="${c.phone}" data-name="${c.name}">
@@ -783,7 +785,7 @@
             if(template) {
                 previewEl.innerHTML = `
                     <p class="text-xs font-semibold text-emerald-400 mb-1">Template #${template.id}</p>
-                    <p class="whitespace-pre-line text-sm text-gray-800 dark:text-gray-200">${template.content.replace('[Nama]', 'Budi Santoso')}</p>
+                    <p class="whitespace-pre-line text-sm text-gray-800 dark:text-gray-200">${template.content.replace('[Nama]', 'Pelanggan')}</p>
                 `;
             }
         };
@@ -821,7 +823,6 @@
             const tbody = document.getElementById('logsTableBody');
             if(logsData.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-gray-400">Belum ada log pengiriman.</td></tr>`;
-                lucide.createIcons();
                 return;
             }
             tbody.innerHTML = logsData.map(l => `
@@ -833,7 +834,6 @@
                     <td class="p-4 text-xs font-mono text-gray-400">${l.msgId}</td>
                 </tr>
             `).join('');
-            lucide.createIcons();
         }
 
         window.clearAllLogs = () => {
